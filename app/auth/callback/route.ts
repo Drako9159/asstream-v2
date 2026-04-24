@@ -14,5 +14,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=Ocurrió%20un%20error%20al%20validar%20el%20enlace`)
+  return NextResponse.redirect(`${origin}/login?error=An%20error%20occurred%20while%20validating%20the%20link`)
 }

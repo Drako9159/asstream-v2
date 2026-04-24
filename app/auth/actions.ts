@@ -29,7 +29,7 @@ export async function signup(formData: FormData) {
   const confirmPassword = formData.get('confirm_password') as string
 
   if (password !== confirmPassword) {
-    redirect('/register?error=' + encodeURIComponent('Las contraseñas no coinciden'))
+    redirect('/register?error=' + encodeURIComponent('The passwords do not match'))
   }
 
   const data = {
@@ -44,7 +44,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard') // Or /login if email confirmation is required.
+  redirect('/dashboard')
 }
 
 export async function signout() {
@@ -57,7 +57,7 @@ export async function signout() {
 export async function resetPasswordEmail(formData: FormData) {
   const supabase = await createClient()
   const email = formData.get('email') as string
-  
+
   const headersList = await headers()
   const host = headersList.get('host')
   const protocol = headersList.get('x-forwarded-proto') ?? 'http'
@@ -71,7 +71,7 @@ export async function resetPasswordEmail(formData: FormData) {
     redirect('/forgot-password?error=' + encodeURIComponent(error.message))
   }
 
-  redirect('/forgot-password?message=' + encodeURIComponent('Te hemos enviado un correo con las instrucciones.'))
+  redirect('/forgot-password?message=' + encodeURIComponent('We have sent you an email with instructions.'))
 }
 
 export async function updatePasswordAction(formData: FormData) {
@@ -80,7 +80,7 @@ export async function updatePasswordAction(formData: FormData) {
   const confirmPassword = formData.get('confirm_password') as string
 
   if (password !== confirmPassword) {
-    redirect('/update-password?error=' + encodeURIComponent('Las contraseñas no coinciden'))
+    redirect('/update-password?error=' + encodeURIComponent('The passwords do not match'))
   }
 
   const { error } = await supabase.auth.updateUser({
@@ -91,5 +91,5 @@ export async function updatePasswordAction(formData: FormData) {
     redirect('/update-password?error=' + encodeURIComponent(error.message))
   }
 
-  redirect('/dashboard?message=' + encodeURIComponent('Contraseña actualizada exitosamente'))
+  redirect('/dashboard?message=' + encodeURIComponent('Password updated successfully'))
 }

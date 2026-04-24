@@ -16,21 +16,21 @@ export default async function ForgotPasswordPage({
       <ToastHandler error={error} message={message} />
       <div className="w-full max-w-sm space-y-6 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-6 shadow-sm">
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-bold dark:text-neutral-50">Recuperar contraseña</h1>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">Ingresa tu correo para enviarte un enlace</p>
+          <h1 className="text-2xl font-bold dark:text-neutral-50">Reset password</h1>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">Enter your email to send you a link</p>
         </div>
         <form className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email" className="dark:text-neutral-200">Correo electrónico</Label>
+            <Label htmlFor="email" className="dark:text-neutral-200">Email</Label>
             <Input id="email" name="email" type="email" placeholder="m@ejemplo.com" required className="dark:text-neutral-50" />
           </div>
-          
+
           <Button formAction={resetPasswordEmail} className="w-full dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-200">
-            Enviar enlace
+            Send link
           </Button>
         </form>
         <div className="text-center text-sm dark:text-neutral-400">
-          <Link href="/login" className="underline dark:text-neutral-300">Volver a iniciar sesión</Link>
+          <Link href="/login" className="underline dark:text-neutral-300">Return to login</Link>
         </div>
       </div>
     </div>

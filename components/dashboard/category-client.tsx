@@ -21,26 +21,26 @@ export function CategoryManager({ initialCategories, viewMode = 'all' }: { initi
     const res = await createCategory(formData)
     if (res?.error) toast.error('Error', { description: res.error })
     else {
-      toast.success('Categoría creada exitosamente')
+      toast.success('Category created successfully')
     }
   }
 
   const handleUpdate = async (formData: FormData) => {
     const res = await updateCategory(formData)
-    if (res?.error) toast.error('Error al editar', { description: res.error })
+    if (res?.error) toast.error('Error while editing', { description: res.error })
     else {
-      toast.success('Categoría actualizada')
+      toast.success('Category updated successfully')
       setEditingId(null)
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Estás seguro de eliminar esta categoría?')) return
+    if (!confirm('Are you sure you want to delete this category?')) return
     const formData = new FormData()
     formData.append('id', id)
     const res = await deleteCategory(formData)
-    if (res?.error) toast.error('Error al eliminar', { description: res.error })
-    else toast.success('Categoría eliminada')
+    if (res?.error) toast.error('Error while deleting', { description: res.error })
+    else toast.success('Category deleted successfully')
   }
 
   return (
@@ -48,17 +48,17 @@ export function CategoryManager({ initialCategories, viewMode = 'all' }: { initi
       {/* Create form */}
       {(viewMode === 'all' || viewMode === 'create') && (
         <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 p-4 bg-white dark:bg-neutral-950 shadow-sm">
-          <h3 className="text-lg font-medium mb-4 dark:text-neutral-50">Nueva Categoría</h3>
+          <h3 className="text-lg font-medium mb-4 dark:text-neutral-50">New Category</h3>
           <form action={handleCreate} className="flex flex-col sm:flex-row gap-4 sm:items-end">
             <div className="flex-1 space-y-2">
-              <Label htmlFor="create_name" className="dark:text-neutral-200">Nombre</Label>
+              <Label htmlFor="create_name" className="dark:text-neutral-200">Name</Label>
               <Input id="create_name" name="name" required className="dark:text-neutral-50" />
             </div>
             <div className="flex-1 space-y-2">
-              <Label htmlFor="create_desc" className="dark:text-neutral-200">Descripción</Label>
+              <Label htmlFor="create_desc" className="dark:text-neutral-200">Description</Label>
               <Input id="create_desc" name="description" className="dark:text-neutral-50" />
             </div>
-            <Button type="submit" className="dark:bg-neutral-50 dark:text-neutral-900 w-full sm:w-auto hover:cursor-pointer dark:hover:bg-neutral-50/80">Crear</Button>
+            <Button type="submit" className="dark:bg-neutral-50 dark:text-neutral-900 w-full sm:w-auto hover:cursor-pointer dark:hover:bg-neutral-50/80">Create</Button>
           </form>
         </div>
       )}
@@ -66,9 +66,9 @@ export function CategoryManager({ initialCategories, viewMode = 'all' }: { initi
       {/* List */}
       {(viewMode === 'all' || viewMode === 'list') && (
         <div className="space-y-4">
-          <h3 className="text-lg font-medium dark:text-neutral-50">Tus Categorías</h3>
+          <h3 className="text-lg font-medium dark:text-neutral-50">Your Categories</h3>
           {initialCategories.length === 0 ? (
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">No tienes categorías aún.</p>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">You don't have any categories yet.</p>
           ) : (
             <div className="grid gap-4">
               {initialCategories.map((cat) => (
@@ -77,16 +77,16 @@ export function CategoryManager({ initialCategories, viewMode = 'all' }: { initi
                     <form action={handleUpdate} className="flex flex-col sm:flex-row flex-1 gap-4 sm:items-end">
                       <input type="hidden" name="id" value={cat.id} />
                       <div className="flex-1 space-y-2">
-                        <Label htmlFor={`edit_name_${cat.id}`} className="dark:text-neutral-200">Nombre</Label>
+                        <Label htmlFor={`edit_name_${cat.id}`} className="dark:text-neutral-200">Name</Label>
                         <Input id={`edit_name_${cat.id}`} name="name" defaultValue={cat.name} required className="dark:text-neutral-50" />
                       </div>
                       <div className="flex-1 space-y-2">
-                        <Label htmlFor={`edit_desc_${cat.id}`} className="dark:text-neutral-200">Descripción</Label>
+                        <Label htmlFor={`edit_desc_${cat.id}`} className="dark:text-neutral-200">Description</Label>
                         <Input id={`edit_desc_${cat.id}`} name="description" defaultValue={cat.description || ''} className="dark:text-neutral-50" />
                       </div>
                       <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                        <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white dark:bg-green-600 dark:hover:bg-green-700 h-10 w-full sm:w-auto px-6 hover:cursor-pointer">Guardar</Button>
-                        <Button type="button" className="bg-neutral-100 text-neutral-900 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 h-10 w-full sm:w-auto hover:cursor-pointer" onClick={() => setEditingId(null)}>Cancelar</Button>
+                        <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white dark:bg-green-600 dark:hover:bg-green-700 h-10 w-full sm:w-auto px-6 hover:cursor-pointer">Save</Button>
+                        <Button type="button" className="bg-neutral-100 text-neutral-900 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 h-10 w-full sm:w-auto hover:cursor-pointer" onClick={() => setEditingId(null)}>Cancel</Button>
                       </div>
                     </form>
                   ) : (
@@ -97,10 +97,10 @@ export function CategoryManager({ initialCategories, viewMode = 'all' }: { initi
                       </div>
                       <div className="flex flex-col sm:flex-row items-center gap-2">
                         <Button type="button" className="bg-neutral-100 text-neutral-900 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 h-10 w-full sm:w-auto hover:cursor-pointer" onClick={() => setEditingId(cat.id)}>
-                          Editar
+                          Edit
                         </Button>
                         <Button type="button" className="bg-red-500 hover:bg-red-600 text-white dark:bg-red-600 dark:hover:bg-red-700 h-10 w-full sm:w-auto px-4 hover:cursor-pointer" onClick={() => handleDelete(cat.id)}>
-                          Eliminar
+                          Delete
                         </Button>
                       </div>
                     </>

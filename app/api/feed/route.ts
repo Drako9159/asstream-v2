@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-  // Opcional: Permitir filtrar por un usuario específico a través de query params ?user_id=123
+  // Optional: Allow filtering by a specific user through query params ?user_id=123
   const { searchParams } = new URL(request.url)
   const userId = searchParams.get('user_id')
 
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
   const { data: channels, error: chanError } = await chanQuery
 
   if (catError || chanError || !categories || !channels) {
-    return NextResponse.json({ error: 'Error agregando datos desde supabase' }, { status: 500 })
+    return NextResponse.json({ error: 'Error adding data from supabase' }, { status: 500 })
   }
 
   const feed: any = {
@@ -41,13 +41,13 @@ export async function GET(request: Request) {
     language: "en"
   }
 
-  // Inicializar los arrays de las categorías
+  // Initialize category arrays
   categories.forEach(cat => {
     const key = toCamelCase(cat.name)
     feed[key] = []
   })
 
-  // Agrupar los canales de forma asíncrona
+  // Group channels asynchronously
   const channelPromises = channels.map(async (channel) => {
     const category = categories.find(c => c.id === channel.category_id)
     if (!category) return null
@@ -55,44 +55,44 @@ export async function GET(request: Request) {
     const key = toCamelCase(category.name)
     let finalUrl = channel.source_url
 
-    // Si la categoría es tvSpecials, intentamos obtener el m3u8 directo de Twitch usando el título del canal
+    // If the category is tvSpecials, try to get the direct m3u8 from Twitch using the channel title
     if (key === 'tvSpecials') {
       try {
         const twitch = require('twitch-m3u8')
         const twitchUsername = channel.title.replace(/\s+/g, '').toLowerCase()
         const streams = await twitch.getStream(twitchUsername)
-        
+
         if (streams && streams.length > 0) {
           finalUrl = streams[0].url
         } else {
-          // El canal de Twitch no está en vivo o no se encontraron streams, se omite
+          // The Twitch channel is not live or no streams were found, it is skipped
           return null
         }
       } catch (err) {
-        // Excepciones normalmente indican que el usuario no está en vivo o no existe
-        console.error('El canal no está en vivo o falló la conexión:', channel.title)
+        // Exceptions normally indicate that the user is not live or does not exist
+        console.error('The channel is not live or the connection failed:', channel.title)
         return null
       }
     } else if (key === 'liveFeeds') {
-      // Validamos si la URL del stream en vivo responde
+      // Validating if the live stream URL responds
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 5000) // Timeout de 5s para no bloquear
-        
-        // Hacemos un GET que solo traerá cabeceras hasta que consumamos el body
-        const response = await fetch(finalUrl, { 
-          method: 'GET', 
-          signal: controller.signal 
+        const timeoutId = setTimeout(() => controller.abort(), 5000) // Timeout of 5s to not block
+
+        // Making a GET that will only bring headers until we consume the body
+        const response = await fetch(finalUrl, {
+          method: 'GET',
+          signal: controller.signal
         })
-        
+
         clearTimeout(timeoutId)
-        
+
         if (!response.ok) {
-          console.error(`Stream inactivo (status ${response.status}) para el canal:`, channel.title)
+          console.error(`Stream inactive (status ${response.status}) for channel:`, channel.title)
           return null
         }
       } catch (err) {
-        console.error('El stream no está disponible o el timeout expiró para:', channel.title)
+        console.error('Stream is not available or timeout expired for:', channel.title)
         return null
       }
     }
