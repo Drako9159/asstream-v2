@@ -1,0 +1,89 @@
+'use client'
+
+import { useState } from 'react'
+import { CategoryManager, Category } from './category-client'
+import { ChannelManager, Channel } from './channel-client'
+import { ListVideo, PlusCircle, LayoutList, FolderPlus } from 'lucide-react'
+
+type Tab = 'list-channels' | 'create-channel' | 'list-categories' | 'create-category'
+
+export function DashboardSidebarLayout({
+  categories,
+  channels,
+  user
+}: {
+  categories: Category[]
+  channels: Channel[]
+  user: any
+}) {
+  const [activeTab, setActiveTab] = useState<Tab>('list-channels')
+
+  const tabClass = (tab: Tab) =>
+    `w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-md text-sm transition-colors ${activeTab === tab ? 'bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-900 font-medium' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400'}`
+
+  return (
+    <div className="flex flex-col md:flex-row gap-6 w-full max-w-7xl mx-auto">
+      {/* Sidebar */}
+      <aside className="w-full md:w-64 shrink-0 space-y-6">
+        <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-4 shadow-sm">
+          <p className="text-xs text-neutral-500 mb-1 uppercase font-bold tracking-wider">Sesión Actual</p>
+          <div className="break-all text-sm font-medium dark:text-neutral-200 truncate" title={user.email}>
+            {user.email}
+          </div>
+        </div>
+
+        <nav className="space-y-1 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 p-2 rounded-lg shadow-sm">
+          <p className="text-xs text-neutral-500 mb-2 uppercase font-bold tracking-wider px-2 pt-2">Canales</p>
+          <button onClick={() => setActiveTab('list-channels')} className={tabClass('list-channels') + ' hover:cursor-pointer'}>
+            <ListVideo className="w-4 h-4" />
+            Listado de Canales
+          </button>
+          <button onClick={() => setActiveTab('create-channel')} className={tabClass('create-channel') + ' hover:cursor-pointer'}>
+            <PlusCircle className="w-4 h-4" />
+            Crear Canal
+          </button>
+
+          <div className="h-px bg-neutral-100 dark:bg-neutral-800 mx-2 my-2"></div>
+
+          <p className="text-xs text-neutral-500 mb-2 uppercase font-bold tracking-wider px-2 pt-2">Categorías</p>
+          <button onClick={() => setActiveTab('list-categories')} className={tabClass('list-categories') + ' hover:cursor-pointer'}>
+            <LayoutList className="w-4 h-4" />
+            Listado de Categorías
+          </button>
+          <button onClick={() => setActiveTab('create-category')} className={tabClass('create-category') + ' hover:cursor-pointer'}>
+            <FolderPlus className="w-4 h-4" />
+            Crear Categoría
+          </button>
+        </nav>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 bg-white dark:bg-neutral-950 rounded-lg border border-neutral-200 dark:border-neutral-800 p-6 shadow-sm min-h-[500px]">
+        {activeTab === 'list-channels' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <h2 className="text-2xl font-bold dark:text-neutral-50 text-neutral-900 mb-6">Listado de Canales</h2>
+            <ChannelManager initialChannels={channels} categories={categories} viewMode="list" />
+          </div>
+        )}
+        {activeTab === 'create-channel' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <h2 className="text-2xl font-bold dark:text-neutral-50 text-neutral-900 mb-6">Nuevo Canal</h2>
+            <ChannelManager initialChannels={channels} categories={categories} viewMode="create" />
+          </div>
+        )}
+        {activeTab === 'list-categories' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <h2 className="text-2xl font-bold dark:text-neutral-50 text-neutral-900 mb-6">Listado de Categorías</h2>
+            <CategoryManager initialCategories={categories} viewMode="list" />
+          </div>
+        )}
+        {activeTab === 'create-category' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <h2 className="text-2xl font-bold dark:text-neutral-50 text-neutral-900 mb-6">Nueva Categoría</h2>
+            <CategoryManager initialCategories={categories} viewMode="create" />
+          </div>
+        )}
+      </main>
+    </div>
+  )
+}

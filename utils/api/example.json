@@ -1,0 +1,266 @@
+{
+    "providerName": "Roku Developer Account",
+    "lastUpdated": "2026-04-24T19:04:20.687Z",
+    "language": "en",
+    "liveFeeds": [
+        {
+            "id": "67a3c7b6b4e8c78e753a1c9d",
+            "title": "Imagen Universal",
+            "content": {
+                "dateAdded": "2025-01-20T00:34:52Z",
+                "videos": [
+                    {
+                        "videoType": "HLS",
+                        "url": "https://imagenuniversaltv.net:3771/live/iutvlive.m3u8",
+                        "quality": "HD"
+                    }
+                ],
+                "duration": 123,
+                "captions": [
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/captions/HDCP_Error_RokuTipsandTricks_20210120T003500_cc_eng.vtt",
+                        "language": "en",
+                        "captionType": "CLOSED_CAPTION"
+                    }
+                ],
+                "trickPlayFiles": [
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/images/17058b9e-a7dc-477e-afaa-0e10d97ddb99-sd.bif",
+                        "quality": "SD"
+                    },
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/images/17058b9e-a7dc-477e-afaa-0e10d97ddb99-hd.bif",
+                        "quality": "HD"
+                    },
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/images/17058b9e-a7dc-477e-afaa-0e10d97ddb99-fhd.bif",
+                        "quality": "FHD"
+                    }
+                ],
+                "language": "es",
+                "audioFormats": [
+                    "stereo"
+                ],
+                "audioTracks": [
+                    {
+                        "language": "en",
+                        "label": "English (Original)"
+                    }
+                ]
+            },
+            "thumbnail": "https://1.bp.blogspot.com/-t-pTaPlLCZs/YLa_vIsBd5I/AAAAAAAAD6o/CfXms8JTUdIpLdA24nbL65xoUum4Igz5gCLcBGAsYHQ/s540/imagen-universal-tv-logoroku.jpg",
+            "backdrop": "https://cdn.pixabay.com/photo/2022/06/30/02/00/mountains-7292778_960_720.jpg",
+            "shortDescription": "Se ha posicionado como un canal de televisión integral que brinda una vasta gama de contenidos a través de su plataforma en línea. La característica más destacada del sitio es la transmisión en vivo, que permite a los espectadores disfrutar de la programación en tiempo real desde cualquier lugar con acceso a internet. Esta funcionalidad es especialmente valiosa para aquellos que, por motivos de movilidad o tiempo, no pueden sintonizar el canal a través de métodos tradicionales.",
+            "releaseDate": "2024-01-01",
+            "longDescription": "Se ha posicionado como un canal de televisión integral que brinda una vasta gama de contenidos a través de su plataforma en línea. La característica más destacada del sitio es la transmisión en vivo, que permite a los espectadores disfrutar de la programación en tiempo real desde cualquier lugar con acceso a internet. Esta funcionalidad es especialmente valiosa para aquellos que, por motivos de movilidad o tiempo, no pueden sintonizar el canal a través de métodos tradicionales.",
+            "tags": [
+                "master",
+                "cable",
+                "content",
+                "error",
+                "fix",
+                "hdcp",
+                "hdmi",
+                "how",
+                "protected",
+                "roku",
+                "roku_101",
+                "screen",
+                "streaming",
+                "to",
+                "troubleshooting"
+            ],
+            "genres": [
+                "Entretenimiento"
+            ],
+            "rating": {
+                "rating": "NR",
+                "ratingSource": "USA_PR"
+            },
+            "externalIds": [
+                {
+                    "id": "Roku101_HDCP",
+                    "idType": "PARTNER_ASSET_ID"
+                },
+                {
+                    "idType": "PARTNER_TITLE_ID",
+                    "id": "Roku101_HDCP"
+                }
+            ]
+        }
+    ],
+    "movies": [
+        {
+            "id": "6994b80b4850657667f403eb",
+            "title": "El demonio que habita en mí",
+            "content": {
+                "dateAdded": "2025-01-20T00:34:52Z",
+                "videos": [
+                    {
+                        "videoType": "HLS",
+                        "url": "https://edge1-waw-sprintcdn.r66nv9ed.com/hls2/01/10805/pdkmoy2zqo4e_x/index-v1-a1.m3u8?t=Agyj2AMhz91BMsEd-gY0cpxZAcHyyCkVps8xEwng7HI&s=1771354054&e=10800&f=54026518&srv=1060&asn=13335&sp=5500&p=0",
+                        "quality": "HD"
+                    }
+                ],
+                "duration": 123,
+                "captions": [
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/captions/HDCP_Error_RokuTipsandTricks_20210120T003500_cc_eng.vtt",
+                        "language": "en",
+                        "captionType": "CLOSED_CAPTION"
+                    }
+                ],
+                "trickPlayFiles": [
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/images/17058b9e-a7dc-477e-afaa-0e10d97ddb99-sd.bif",
+                        "quality": "SD"
+                    },
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/images/17058b9e-a7dc-477e-afaa-0e10d97ddb99-hd.bif",
+                        "quality": "HD"
+                    },
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/images/17058b9e-a7dc-477e-afaa-0e10d97ddb99-fhd.bif",
+                        "quality": "FHD"
+                    }
+                ],
+                "language": "es",
+                "audioFormats": [
+                    "stereo"
+                ],
+                "audioTracks": [
+                    {
+                        "language": "en",
+                        "label": "English (Original)"
+                    }
+                ]
+            },
+            "thumbnail": "https://image.tmdb.org/t/p/w500/kmnaCRTinFPN8iplWgdGQZ52WzY.jpg",
+            "backdrop": "https://image.tmdb.org/t/p/w500/nLxoXMY7LnS8ymfNWusCV1wuK7V.jpg",
+            "shortDescription": "Lo que comienza como una fiesta de inauguración de la casa para Tad, se convierte en una noche atormentadora, dejando a cada asistente luchando por enfrentarse a su pasado, obsesionado por sus peores arrepentimientos.",
+            "releaseDate": "2025-01-15",
+            "longDescription": "Lo que comienza como una fiesta de inauguración de la casa para Tad, se convierte en una noche atormentadora, dejando a cada asistente luchando por enfrentarse a su pasado, obsesionado por sus peores arrepentimientos.",
+            "tags": [
+                "Entretenimiento",
+                "cable",
+                "content",
+                "error",
+                "fix",
+                "hdcp",
+                "hdmi",
+                "how",
+                "protected",
+                "roku",
+                "roku_101",
+                "screen",
+                "streaming",
+                "to",
+                "troubleshooting"
+            ],
+            "genres": [
+                "Entretenimiento"
+            ],
+            "rating": {
+                "rating": "NR",
+                "ratingSource": "USA_PR"
+            },
+            "externalIds": [
+                {
+                    "id": "Roku101_HDCP",
+                    "idType": "PARTNER_ASSET_ID"
+                },
+                {
+                    "idType": "PARTNER_TITLE_ID",
+                    "id": "Roku101_HDCP"
+                }
+            ]
+        }
+    ],
+    "tvSpecials": [
+        {
+            "id": "67aea54bbc255a5b1e65a018",
+            "title": "mira",
+            "content": {
+                "dateAdded": "2025-01-20T00:34:52Z",
+                "videos": [
+                    {
+                        "videoType": "HLS",
+                        "url": "https://use23.playlist.ttvnw.net/v1/playlist/CrAEge7g_LVvJ7-hy81izFzmrgNu3mpYrHuUdaRucKY8uUoF8FNn81a4vzHjuubKrWIe_qfFGtF_Ptl1zRenWFVGH2lg4rByMbbBL6XLqXrVwiQBZSftFaYSldhcsJ3sV4oJe24Dr8x0E0gTenvXQ94xQiiN07VFbzQCLwaa9yyPA7yc-bFQT96YBZALEv4KrXyMugcMEBkzQfpCqzBeiGZr5eWev3VaA6yZm9lhmtxXypFQ_m9F7gQJCvkhG72kr0Z3Zt_sktQEP4X0YA1-oONumA6UdkVMiQbSTWHQ8iIuGiFlSeNN-QoILEd7GTCp192pBrUctN7Q5omJY70ShIs1qK1rh_OSEUVorp9jOI4BKas2LY5BmVGZLywoS4_O67kOZpzUntVKjORpJNLkV449YpkhU8brD_CyX_4ccLBB31dZ-Vo1iyw9NVgsR4wN1v3IFfSwXL1GHhiQ8HuzzQpoFPDNybggdV4A2l-mEFLhGpT8ErRXVGjN1TxrIFEMPm4cQ7t7_rcvL_wkYpBV0vFVPpOEy1uArtdV_L9vkRoLKkVJQhNlwuQK0JJF_s7fPT_zI2O5qtmR0q2toKETq7G7jSkJL6qett0suH2SorTRLg06VpwNA-bQARPEgrq24hCL2nkkt1b68H5svmlg1ITZb0SbPzcPgC4Bz-M1OKuYhXxR4wb0oHIv9nE3XQTgVmq4A3qNoUVNk8SdVf2kOqU7qREqX_OXIjqA2hCdMVWib74aDBNh4uvlUdIAWXIgcSABKgl1cy1lYXN0LTIw-g4.m3u8",
+                        "quality": "HD"
+                    }
+                ],
+                "duration": 123,
+                "captions": [
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/captions/HDCP_Error_RokuTipsandTricks_20210120T003500_cc_eng.vtt",
+                        "language": "en",
+                        "captionType": "CLOSED_CAPTION"
+                    }
+                ],
+                "trickPlayFiles": [
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/images/17058b9e-a7dc-477e-afaa-0e10d97ddb99-sd.bif",
+                        "quality": "SD"
+                    },
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/images/17058b9e-a7dc-477e-afaa-0e10d97ddb99-hd.bif",
+                        "quality": "HD"
+                    },
+                    {
+                        "url": "https://static-delivery.sr.roku.com/17058b9e-a7dc-477e-afaa-0e10d97ddb99/images/17058b9e-a7dc-477e-afaa-0e10d97ddb99-fhd.bif",
+                        "quality": "FHD"
+                    }
+                ],
+                "language": "es",
+                "audioFormats": [
+                    "stereo"
+                ],
+                "audioTracks": [
+                    {
+                        "language": "en",
+                        "label": "English (Original)"
+                    }
+                ]
+            },
+            "thumbnail": "https://static-cdn.jtvnw.net/jtv_user_pictures/0c4b5b4d-d38f-49d6-995a-ceafbf9d2432-profile_image-70x70.png",
+            "backdrop": "https://marketplace.canva.com/EAEeOQwo3jY/1/0/1600w/canva-purple-mountain-vintage-retro-twitch-banner-1NYTq34QR6I.jpg",
+            "shortDescription": "Streamer de Helldivers 2, Just chatting and Brawl Stars",
+            "releaseDate": "2025-01-01",
+            "longDescription": "Streamer de Helldivers 2, Just chatting and Brawl Stars",
+            "tags": [
+                "Entretenimiento",
+                "cable",
+                "content",
+                "error",
+                "fix",
+                "hdcp",
+                "hdmi",
+                "how",
+                "protected",
+                "roku",
+                "roku_101",
+                "screen",
+                "streaming",
+                "to",
+                "troubleshooting"
+            ],
+            "genres": [
+                "Entretenimiento"
+            ],
+            "rating": {
+                "rating": "NR",
+                "ratingSource": "USA_PR"
+            },
+            "externalIds": [
+                {
+                    "id": "Roku101_HDCP",
+                    "idType": "PARTNER_ASSET_ID"
+                },
+                {
+                    "idType": "PARTNER_TITLE_ID",
+                    "id": "Roku101_HDCP"
+                }
+            ]
+        }
+    ]
+}
