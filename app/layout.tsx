@@ -15,24 +15,24 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "OmniStream - Premium Streaming CMS",
-    template: "%s | OmniStream",
+    default: "ASStream - Premium Streaming CMS",
+    template: "%s | ASStream",
   },
   description: "Advanced Content Management System for live TV channels and Video-On-Demand. Generate JSON feeds for Roku Direct Publisher autonomously.",
   keywords: ["CMS", "Streaming", "VOD", "Live TV", "Roku", "Direct Publisher", "JSON Feed"],
-  authors: [{ name: "OmniStream Team" }],
-  creator: "OmniStream",
+  authors: [{ name: "ASStream Team" }],
+  creator: "ASStream",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://omnistream.app",
-    title: "OmniStream - Premium Streaming CMS",
+    url: "https://asstream-v2.fly.dev/",
+    title: "ASStream - Premium Streaming CMS",
     description: "Advanced Content Management System for live TV channels and Video-On-Demand.",
-    siteName: "OmniStream",
+    siteName: "ASStream",
   },
   twitter: {
     card: "summary_large_image",
-    title: "OmniStream - Premium Streaming CMS",
+    title: "ASStream - Premium Streaming CMS",
     description: "Advanced Content Management System for live TV channels and Video-On-Demand.",
   },
 };
