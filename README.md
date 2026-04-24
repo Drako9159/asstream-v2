@@ -1,6 +1,6 @@
 # Asstream V2 🚀
 
-Welcome to **Asstream V2**, the new and redesigned version of the content management and streaming system. This project is a powerful CMS (Content Management System) architecture that autonomously generates JSON feeds compatible with Roku Direct Publisher, simplifying the administration of live channels and VOD.
+Welcome to **Asstream V2**, the new and redesigned version of the content management and streaming system. The newly redesigned version of the content management and streaming system. This project involves a CMS (content management system) architecture that automatically generates JSON feeds compatible with Roku Direct Publisher, simplifying the management of live channels and video-on-demand (VOD) content.
 
 ## 🌟 What's New in V2
 
