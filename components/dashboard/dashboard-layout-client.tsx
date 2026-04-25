@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { CategoryManager, Category } from './category-client'
 import { ChannelManager, Channel } from './channel-client'
 import { ListVideo, PlusCircle, LayoutList, FolderPlus } from 'lucide-react'
@@ -17,6 +17,13 @@ export function DashboardSidebarLayout({
   user: any
 }) {
   const [activeTab, setActiveTab] = useState<Tab>('list-channels')
+  const [fullUrl, setFullUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setFullUrl(`${window.location.origin}/api/feed?user_id=${user.id}`)
+    }
+  }, [user])
 
   const tabClass = (tab: Tab) =>
     `w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-md text-sm transition-colors ${activeTab === tab ? 'bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-900 font-medium' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400'}`
@@ -35,7 +42,7 @@ export function DashboardSidebarLayout({
         <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-4 shadow-sm">
           <p className="text-xs text-neutral-500 mb-1 uppercase font-bold tracking-wider">Roku Feed URL</p>
           <div className="break-all text-xs font-mono dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-900 p-2 rounded mt-2 select-all">
-            {typeof window !== 'undefined' ? `${window.location.origin}/api/feed?user_id=${user.id}` : `/api/feed?user_id=${user.id}`}
+            {fullUrl}
           </div>
           <p className="text-[10px] text-neutral-400 mt-2 leading-tight">Paste this URL into your Roku Direct Publisher dashboard.</p>
         </div>

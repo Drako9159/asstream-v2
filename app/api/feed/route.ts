@@ -3,6 +3,40 @@ import { createClient } from '@supabase/supabase-js'
 
 export const revalidate = 300 // Caché (ISR) de 5 minutos
 
+// --- CORS Configuration ---
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
+// --- Basic In-Memory Rate Limiter ---
+const rateLimitMap = new Map<string, { count: number, resetAt: number }>()
+
+function checkRateLimit(ip: string) {
+  const now = Date.now()
+  const windowMs = 15 * 60 * 1000 // 15 minutes window
+  const maxRequests = 100 // 100 requests per 15 minutes
+
+  let userRecord = rateLimitMap.get(ip)
+
+  if (!userRecord || userRecord.resetAt < now) {
+    userRecord = { count: 1, resetAt: now + windowMs }
+    rateLimitMap.set(ip, userRecord)
+    return { success: true }
+  }
+
+  if (userRecord.count >= maxRequests) {
+    return { success: false }
+  }
+
+  userRecord.count += 1
+  return { success: true }
+}
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders })
+}
 
 // Generic helper to convert words to camelCase (e.g. "Live Feeds" -> "liveFeeds")
 const toCamelCase = (str: string) => {
@@ -12,6 +46,17 @@ const toCamelCase = (str: string) => {
 }
 
 export async function GET(request: Request) {
+  // Check Rate Limit
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown-ip'
+  const rateLimitResult = checkRateLimit(ip)
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Limit is 100 requests per 15 minutes.' }, 
+      { status: 429, headers: corsHeaders }
+    )
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   const supabase = createClient(supabaseUrl, supabaseAnonKey)
@@ -21,7 +66,7 @@ export async function GET(request: Request) {
   const userId = searchParams.get('user_id')
 
   if (!userId) {
-    return NextResponse.json({ error: 'user_id is required' }, { status: 400 })
+    return NextResponse.json({ error: 'user_id is required' }, { status: 400, headers: corsHeaders })
   }
 
   let catQuery = supabase.from('categories').select('*').eq('user_id', userId)
@@ -31,7 +76,7 @@ export async function GET(request: Request) {
   const { data: channels, error: chanError } = await chanQuery
 
   if (catError || chanError || !categories || !channels) {
-    return NextResponse.json({ error: 'Error adding data from supabase' }, { status: 500 })
+    return NextResponse.json({ error: 'Error adding data from supabase' }, { status: 500, headers: corsHeaders })
   }
 
   const feed: any = {
@@ -191,5 +236,5 @@ export async function GET(request: Request) {
   //   }
   // })
 
-  return NextResponse.json(feed)
+  return NextResponse.json(feed, { headers: corsHeaders })
 }
