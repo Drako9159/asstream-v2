@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://asstream-v2.fly.dev"),
   title: {
     default: "ASStream - Premium Streaming CMS",
     template: "%s | ASStream",
@@ -29,11 +30,20 @@ export const metadata: Metadata = {
     title: "ASStream - Premium Streaming CMS",
     description: "Advanced Content Management System for live TV channels and Video-On-Demand.",
     siteName: "ASStream",
+    images: [
+      {
+        url: "/og-image.jpg", // You can add an actual image in the public folder later
+        width: 1200,
+        height: 630,
+        alt: "ASStream - Premium Streaming CMS",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "ASStream - Premium Streaming CMS",
     description: "Advanced Content Management System for live TV channels and Video-On-Demand.",
+    images: ["/og-image.jpg"],
   },
 };
 
