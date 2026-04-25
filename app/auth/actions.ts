@@ -32,15 +32,26 @@ export async function signup(formData: FormData) {
     redirect('/register?error=' + encodeURIComponent('The passwords do not match'))
   }
 
-  const data = {
+  const headersList = await headers()
+  const host = headersList.get('x-forwarded-host') ?? headersList.get('host')
+  const protocol = headersList.get('x-forwarded-proto') ?? 'http'
+  let origin = process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`
+  origin = origin.endsWith('/') ? origin.slice(0, -1) : origin
+
+  const { data: authData, error } = await supabase.auth.signUp({
     email,
     password,
-  }
-
-  const { error } = await supabase.auth.signUp(data)
+    options: {
+      emailRedirectTo: `${origin}/auth/callback`,
+    },
+  })
 
   if (error) {
     redirect('/register?error=' + encodeURIComponent(error.message))
+  }
+
+  if (authData.user && authData.session === null) {
+    redirect('/register?message=' + encodeURIComponent('Please check your email to verify your account.'))
   }
 
   revalidatePath('/', 'layout')

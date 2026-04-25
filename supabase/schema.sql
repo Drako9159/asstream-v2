@@ -1,6 +1,6 @@
 -- Create a table for public profiles
 create table profiles (
-  id uuid references auth.users not null primary key,
+  id uuid references auth.users on delete cascade not null primary key,
   updated_at timestamp with time zone,
   username text unique,
   full_name text,
@@ -44,7 +44,7 @@ create trigger on_auth_user_created
 create table public.categories (
   id uuid default gen_random_uuid() primary key,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  user_id uuid references auth.users not null,
+  user_id uuid references auth.users on delete cascade not null,
   name text not null,
   description text
 );
@@ -72,7 +72,7 @@ create policy "Public can view categories" on public.categories
 create table public.channels (
   id uuid default gen_random_uuid() primary key,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  user_id uuid references auth.users not null,
+  user_id uuid references auth.users on delete cascade not null,
   category_id uuid references public.categories on delete cascade not null,
   title text not null,
   description text,
