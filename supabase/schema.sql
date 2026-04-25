@@ -63,7 +63,7 @@ create policy "Users can update their own categories" on public.categories
 create policy "Users can delete their own categories" on public.categories
   for delete using ((select auth.uid()) = user_id);
 
--- Extra policy
+-- Extra policy for API Access
 create policy "Public can view categories" on public.categories
   for select using (true);
 
@@ -97,6 +97,6 @@ create policy "Users can update their own channels" on public.channels
 create policy "Users can delete their own channels" on public.channels
   for delete using ((select auth.uid()) = user_id);
 
--- Extra policy
+-- Extra policy for API Access
 create policy "Public can view active channels" on public.channels
   for select using (is_active = true);
