@@ -59,9 +59,11 @@ export async function resetPasswordEmail(formData: FormData) {
   const email = formData.get('email') as string
 
   const headersList = await headers()
-  const host = headersList.get('host')
+  const host = headersList.get('x-forwarded-host') ?? headersList.get('host')
   const protocol = headersList.get('x-forwarded-proto') ?? 'http'
-  const origin = `${protocol}://${host}`
+  let origin = process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`
+  // remove trailing slash if present
+  origin = origin.endsWith('/') ? origin.slice(0, -1) : origin
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/auth/callback?next=/update-password`,
