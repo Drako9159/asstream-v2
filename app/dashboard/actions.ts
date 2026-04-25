@@ -2,19 +2,39 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+
+const CategorySchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
+  description: z.string().max(500, 'Description is too long').nullable().optional(),
+})
+
+const UpdateCategorySchema = CategorySchema.extend({
+  id: z.string().min(1, 'Category ID is required'),
+})
+
+const DeleteCategorySchema = z.object({
+  id: z.string().min(1, 'Category ID is required'),
+})
 
 export async function createCategory(formData: FormData) {
   const supabase = await createClient()
-  const name = formData.get('name') as string
-  const description = formData.get('description') as string
+  
+  const validatedFields = CategorySchema.safeParse({
+    name: formData.get('name') || '',
+    description: formData.get('description') || '',
+  })
+
+  if (!validatedFields.success) {
+    return { error: validatedFields.error.issues[0].message }
+  }
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
   const { error } = await supabase.from('categories').insert({
     user_id: user.id,
-    name,
-    description
+    ...validatedFields.data
   })
 
   if (error) {
@@ -27,16 +47,25 @@ export async function createCategory(formData: FormData) {
 
 export async function updateCategory(formData: FormData) {
   const supabase = await createClient()
-  const id = formData.get('id') as string
-  const name = formData.get('name') as string
-  const description = formData.get('description') as string
+  
+  const validatedFields = UpdateCategorySchema.safeParse({
+    id: formData.get('id') || '',
+    name: formData.get('name') || '',
+    description: formData.get('description') || '',
+  })
+
+  if (!validatedFields.success) {
+    return { error: validatedFields.error.issues[0].message }
+  }
+
+  const { id, ...updateData } = validatedFields.data
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
   const { error } = await supabase
     .from('categories')
-    .update({ name, description })
+    .update(updateData)
     .eq('id', id)
     .eq('user_id', user.id)
 
@@ -50,7 +79,14 @@ export async function updateCategory(formData: FormData) {
 
 export async function deleteCategory(formData: FormData) {
   const supabase = await createClient()
-  const id = formData.get('id') as string
+  
+  const validatedFields = DeleteCategorySchema.safeParse({
+    id: formData.get('id') || '',
+  })
+
+  if (!validatedFields.success) {
+    return { error: validatedFields.error.issues[0].message }
+  }
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
@@ -58,7 +94,7 @@ export async function deleteCategory(formData: FormData) {
   const { error } = await supabase
     .from('categories')
     .delete()
-    .eq('id', id)
+    .eq('id', validatedFields.data.id)
     .eq('user_id', user.id)
 
   if (error) {

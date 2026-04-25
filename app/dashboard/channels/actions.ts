@@ -2,35 +2,53 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+
+const ChannelSchema = z.object({
+  category_id: z.string().min(1, 'Category is required'),
+  title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
+  description: z.string().max(1000, 'Description is too long').nullable().optional(),
+  poster_url: z.string().url('Invalid poster URL').optional().or(z.literal('')),
+  banner_url: z.string().url('Invalid banner URL').optional().or(z.literal('')),
+  source_url: z.string().url('Invalid source URL').optional().or(z.literal('')),
+  is_active: z.boolean(),
+  is_streaming: z.boolean(),
+  quality: z.string().max(50).nullable().optional(),
+})
+
+const UpdateChannelSchema = ChannelSchema.extend({
+  id: z.string().min(1, 'Channel ID is required'),
+})
+
+const DeleteChannelSchema = z.object({
+  id: z.string().min(1, 'Channel ID is required'),
+})
 
 export async function createChannel(formData: FormData) {
   const supabase = await createClient()
 
-  // Extract fields
-  const category_id = formData.get('category_id') as string
-  const title = formData.get('title') as string
-  const description = formData.get('description') as string
-  const poster_url = formData.get('poster_url') as string
-  const banner_url = formData.get('banner_url') as string
-  const source_url = formData.get('source_url') as string
-  const is_active = formData.get('is_active') === 'true'
-  const is_streaming = formData.get('is_streaming') === 'true'
-  const quality = formData.get('quality') as string
+  const validatedFields = ChannelSchema.safeParse({
+    category_id: formData.get('category_id') || '',
+    title: formData.get('title') || '',
+    description: formData.get('description') || '',
+    poster_url: formData.get('poster_url') || '',
+    banner_url: formData.get('banner_url') || '',
+    source_url: formData.get('source_url') || '',
+    is_active: formData.get('is_active') === 'true',
+    is_streaming: formData.get('is_streaming') === 'true',
+    quality: formData.get('quality') || '',
+  })
+
+  if (!validatedFields.success) {
+    return { error: validatedFields.error.issues[0].message }
+  }
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
   const { error } = await supabase.from('channels').insert({
     user_id: user.id,
-    category_id,
-    title,
-    description,
-    poster_url,
-    banner_url,
-    source_url,
-    is_active,
-    is_streaming,
-    quality
+    ...validatedFields.data
   })
 
   if (error) {
@@ -44,26 +62,31 @@ export async function createChannel(formData: FormData) {
 export async function updateChannel(formData: FormData) {
   const supabase = await createClient()
   
-  const id = formData.get('id') as string
-  const category_id = formData.get('category_id') as string
-  const title = formData.get('title') as string
-  const description = formData.get('description') as string
-  const poster_url = formData.get('poster_url') as string
-  const banner_url = formData.get('banner_url') as string
-  const source_url = formData.get('source_url') as string
-  const is_active = formData.get('is_active') === 'true'
-  const is_streaming = formData.get('is_streaming') === 'true'
-  const quality = formData.get('quality') as string
+  const validatedFields = UpdateChannelSchema.safeParse({
+    id: formData.get('id') || '',
+    category_id: formData.get('category_id') || '',
+    title: formData.get('title') || '',
+    description: formData.get('description') || '',
+    poster_url: formData.get('poster_url') || '',
+    banner_url: formData.get('banner_url') || '',
+    source_url: formData.get('source_url') || '',
+    is_active: formData.get('is_active') === 'true',
+    is_streaming: formData.get('is_streaming') === 'true',
+    quality: formData.get('quality') || '',
+  })
+
+  if (!validatedFields.success) {
+    return { error: validatedFields.error.issues[0].message }
+  }
+
+  const { id, ...updateData } = validatedFields.data
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
   const { error } = await supabase
     .from('channels')
-    .update({ 
-      category_id, title, description, poster_url, banner_url, 
-      source_url, is_active, is_streaming, quality 
-    })
+    .update(updateData)
     .eq('id', id)
     .eq('user_id', user.id)
 
@@ -77,7 +100,14 @@ export async function updateChannel(formData: FormData) {
 
 export async function deleteChannel(formData: FormData) {
   const supabase = await createClient()
-  const id = formData.get('id') as string
+  
+  const validatedFields = DeleteChannelSchema.safeParse({
+    id: formData.get('id') || '',
+  })
+
+  if (!validatedFields.success) {
+    return { error: validatedFields.error.issues[0].message }
+  }
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
@@ -85,7 +115,7 @@ export async function deleteChannel(formData: FormData) {
   const { error } = await supabase
     .from('channels')
     .delete()
-    .eq('id', id)
+    .eq('id', validatedFields.data.id)
     .eq('user_id', user.id)
 
   if (error) {
