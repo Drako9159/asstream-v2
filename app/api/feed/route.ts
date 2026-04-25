@@ -72,8 +72,10 @@ export async function GET(request: Request) {
   let catQuery = supabase.from('categories').select('*').eq('user_id', userId)
   let chanQuery = supabase.from('channels').select('*').eq('is_active', true).eq('user_id', userId)
 
-  const { data: categories, error: catError } = await catQuery
-  const { data: channels, error: chanError } = await chanQuery
+  const [
+    { data: categories, error: catError },
+    { data: channels, error: chanError }
+  ] = await Promise.all([catQuery, chanQuery])
 
   if (catError || chanError || !categories || !channels) {
     return NextResponse.json({ error: 'Error adding data from supabase' }, { status: 500, headers: corsHeaders })
@@ -123,9 +125,9 @@ export async function GET(request: Request) {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 5000) // Timeout of 5s to not block
 
-        // Making a GET that will only bring headers until we consume the body
+        // Make a HEAD request to only fetch headers, significantly faster than GET
         const response = await fetch(finalUrl, {
-          method: 'GET',
+          method: 'HEAD',
           signal: controller.signal
         })
 
