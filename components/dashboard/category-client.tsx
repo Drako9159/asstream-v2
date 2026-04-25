@@ -7,12 +7,9 @@ import { Label } from '@/components/ui/label'
 import { createCategory, updateCategory, deleteCategory } from '@/app/dashboard/actions'
 import { toast } from 'sonner'
 
-export type Category = {
-  id: string
-  name: string
-  description: string | null
-  created_at: string
-}
+import { Database } from '@/types/supabase'
+
+export type Category = Database['public']['Tables']['categories']['Row']
 
 export function CategoryManager({ initialCategories, viewMode = 'all' }: { initialCategories: Category[], viewMode?: 'all' | 'create' | 'list' }) {
   const [editingId, setEditingId] = useState<string | null>(null)

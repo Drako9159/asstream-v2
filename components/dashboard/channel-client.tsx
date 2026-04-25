@@ -8,20 +8,9 @@ import { searchTMDBMedia, getTMDBDetails } from '@/app/dashboard/tmdb-actions'
 import { createChannel, updateChannel, deleteChannel } from '@/app/dashboard/channels/actions'
 import { toast } from 'sonner'
 import { Category } from './category-client'
+import { Database } from '@/types/supabase'
 
-export type Channel = {
-  id: string
-  category_id: string
-  title: string
-  description: string | null
-  poster_url: string | null
-  banner_url: string | null
-  source_url: string
-  is_active: boolean
-  quality: string
-  is_streaming: boolean
-  created_at: string
-}
+export type Channel = Database['public']['Tables']['channels']['Row']
 
 export function ChannelManager({ initialChannels, categories, viewMode = 'all' }: { initialChannels: Channel[], categories: Category[], viewMode?: 'all' | 'create' | 'list' }) {
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -123,15 +112,15 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
 
   const handleEditClick = (channel: Channel) => {
     setEditingId(channel.id)
-    setIsStreaming(channel.is_streaming)
+    setIsStreaming(channel.is_streaming ?? true)
     setFormState({
       title: channel.title,
       description: channel.description || '',
       poster_url: channel.poster_url || '',
       banner_url: channel.banner_url || '',
       source_url: channel.source_url || '',
-      quality: channel.quality,
-      is_active: channel.is_active,
+      quality: channel.quality || 'HD',
+      is_active: channel.is_active ?? true,
       category_id: channel.category_id
     })
     window.scrollTo({ top: 800, behavior: 'smooth' })
