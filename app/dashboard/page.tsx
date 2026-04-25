@@ -15,15 +15,13 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  const { data: channels } = await supabase
-    .from('channels')
-    .select('*')
-    .order('created_at', { ascending: false })
+  const [
+    { data: categories },
+    { data: channels }
+  ] = await Promise.all([
+    supabase.from('categories').select('*').order('created_at', { ascending: false }),
+    supabase.from('channels').select('*').order('created_at', { ascending: false })
+  ])
 
   return (
     <div className="flex min-h-screen w-full flex-col p-4 sm:p-8 bg-neutral-50 dark:bg-neutral-950">
