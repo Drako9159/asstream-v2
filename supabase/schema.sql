@@ -65,7 +65,8 @@ create policy "Users can delete their own categories" on public.categories
 
 -- Extra policy for API Access
 create policy "Public can view categories" on public.categories
-  for select using (true);
+  for select using (auth.role() = 'anon');
+
 
 -- Create table for channels
 create table public.channels (
@@ -99,4 +100,5 @@ create policy "Users can delete their own channels" on public.channels
 
 -- Extra policy for API Access
 create policy "Public can view active channels" on public.channels
-  for select using (is_active = true);
+  for select using (is_active = true and auth.role() = 'anon');
+
