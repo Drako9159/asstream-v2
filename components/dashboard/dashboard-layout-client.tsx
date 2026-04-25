@@ -32,6 +32,14 @@ export function DashboardSidebarLayout({
           </div>
         </div>
 
+        <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-4 shadow-sm">
+          <p className="text-xs text-neutral-500 mb-1 uppercase font-bold tracking-wider">Roku Feed URL</p>
+          <div className="break-all text-xs font-mono dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-900 p-2 rounded mt-2 select-all">
+            {typeof window !== 'undefined' ? `${window.location.origin}/api/feed?user_id=${user.id}` : `/api/feed?user_id=${user.id}`}
+          </div>
+          <p className="text-[10px] text-neutral-400 mt-2 leading-tight">Paste this URL into your Roku Direct Publisher dashboard.</p>
+        </div>
+
         <nav className="space-y-1 bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 p-2 rounded-lg shadow-sm">
           <p className="text-xs text-neutral-500 mb-2 uppercase font-bold tracking-wider px-2 pt-2">Channels</p>
           <button onClick={() => setActiveTab('list-channels')} className={tabClass('list-channels') + ' hover:cursor-pointer'}>

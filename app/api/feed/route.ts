@@ -16,17 +16,16 @@ export async function GET(request: Request) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-  // Optional: Allow filtering by a specific user through query params ?user_id=123
+  // Require filtering by a specific user through query params ?user_id=123
   const { searchParams } = new URL(request.url)
   const userId = searchParams.get('user_id')
 
-  let catQuery = supabase.from('categories').select('*')
-  let chanQuery = supabase.from('channels').select('*').eq('is_active', true)
-
-  if (userId) {
-    catQuery = catQuery.eq('user_id', userId)
-    chanQuery = chanQuery.eq('user_id', userId)
+  if (!userId) {
+    return NextResponse.json({ error: 'user_id is required' }, { status: 400 })
   }
+
+  let catQuery = supabase.from('categories').select('*').eq('user_id', userId)
+  let chanQuery = supabase.from('channels').select('*').eq('is_active', true).eq('user_id', userId)
 
   const { data: categories, error: catError } = await catQuery
   const { data: channels, error: chanError } = await chanQuery
