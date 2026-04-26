@@ -52,7 +52,7 @@ export async function GET(request: Request) {
 
   if (!rateLimitResult.success) {
     return NextResponse.json(
-      { error: 'Too many requests. Limit is 100 requests per 15 minutes.' }, 
+      { error: 'Too many requests. Limit is 100 requests per 15 minutes.' },
       { status: 429, headers: corsHeaders }
     )
   }
@@ -230,6 +230,101 @@ export async function GET(request: Request) {
       feed[res.key].push(res.channelData)
     }
   })
+
+  // --- External API Integration (IPTV-ORG) ---
+  const ALLOWED_CATEGORIES = ['family', 'entertainment'] // Escribe aquí las categorías que quieres obtener
+  const IGNORED_CHANNELS = ['Canal a omitir 1', 'Canal a omitir 2'] // Escribe aquí los nombres de canales que quieres skipear
+
+  try {
+    const [channelsRes, feedsRes, streamsRes, logosRes] = await Promise.all([
+      fetch('https://iptv-org.github.io/api/channels.json').then(r => r.json()),
+      fetch('https://iptv-org.github.io/api/feeds.json').then(r => r.json()),
+      fetch('https://iptv-org.github.io/api/streams.json').then(r => r.json()),
+      fetch('https://iptv-org.github.io/api/logos.json').then(r => r.json())
+    ])
+
+    // 1. Obtener IDs de canales con idioma español ("spa")
+    const spanishChannelIds = new Set(
+      feedsRes.filter((f: any) => f.languages && f.languages.includes('spa')).map((f: any) => f.channel)
+    )
+
+    // 2. Filtrar canales por idioma, categorías y blocklist
+    const filteredChannels = channelsRes.filter((c: any) => {
+      if (!c.categories) return false
+      const hasAllowedCategory = c.categories.some((cat: string) => ALLOWED_CATEGORIES.includes(cat.toLowerCase()))
+      const isSpanish = spanishChannelIds.has(c.id)
+      const isNotIgnored = !IGNORED_CHANNELS.includes(c.name)
+      return hasAllowedCategory && isSpanish && isNotIgnored
+    })
+
+    // 3. Mapear y validar los streams
+    const externalChannelPromises = filteredChannels.map(async (channel: any) => {
+      const stream = streamsRes.find((s: any) => s.channel === channel.id)
+      if (!stream || !stream.url) return null
+
+      // Validación de disponibilidad del stream
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 5000)
+        const response = await fetch(stream.url, { method: 'HEAD', signal: controller.signal })
+        clearTimeout(timeoutId)
+        if (!response.ok) return null
+      } catch (err) {
+        return null // Stream inaccesible o timeout
+      }
+
+      // Obtener logo
+      const logo = logosRes.find((l: any) => l.channel === channel.id)
+      const thumbnailUrl = logo?.url || "https://via.placeholder.com/500"
+
+      const assignedCategory = channel.categories.find((cat: string) => ALLOWED_CATEGORIES.includes(cat.toLowerCase())) || 'external'
+      const key = toCamelCase(assignedCategory)
+
+      const channelData = {
+        id: channel.id,
+        title: channel.name,
+        content: {
+          dateAdded: new Date().toISOString(),
+          videos: [
+            {
+              videoType: stream.url.includes('.m3u8') ? "HLS" : "MP4",
+              url: stream.url,
+              quality: stream.quality || "HD"
+            }
+          ],
+          duration: 123,
+          captions: [],
+          trickPlayFiles: [],
+          language: "es",
+          audioFormats: ["stereo"],
+          audioTracks: [{ language: "es", label: "Spanish" }]
+        },
+        thumbnail: thumbnailUrl,
+        backdrop: "https://via.placeholder.com/1600",
+        shortDescription: channel.name || assignedCategory,
+        releaseDate: new Date().toISOString().split('T')[0],
+        longDescription: channel.name || assignedCategory,
+        tags: [assignedCategory, "iptv", "external"],
+        genres: [assignedCategory],
+        rating: { rating: "NR", ratingSource: "USA_PR" }
+      }
+
+      return { key, channelData }
+    })
+
+    const resolvedExternal = await Promise.all(externalChannelPromises)
+    resolvedExternal.forEach(res => {
+      if (res) {
+        if (!feed[res.key]) {
+          feed[res.key] = []
+        }
+        feed[res.key].push(res.channelData)
+      }
+    })
+
+  } catch (error) {
+    console.error('Error fetching external IPTV API:', error)
+  }
 
   // Eliminar arrays vacíos para un JSON más limpio y exacto al que espera el cliente si es necesario
   // Object.keys(feed).forEach(key => {
