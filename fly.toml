@@ -4,7 +4,7 @@
 #
 
 app = 'asstream-v2'
-primary_region = 'gdl'
+primary_region = 'gru'
 
 [build]
 

@@ -232,7 +232,7 @@ export async function GET(request: Request) {
   })
 
   // --- External API Integration (IPTV-ORG) ---
-  const ALLOWED_CATEGORIES = ['family', 'general'] // Escribe aquí las categorías que quieres obtener
+  const ALLOWED_CATEGORIES = ['family', 'general', 'movies', 'entertainment'] // Escribe aquí las categorías que quieres obtener
   const IGNORED_CHANNELS = ['Telenovisa43', 'The Pet Collective', 'Buena TV', 'Canal Nets',
     'Canica TV', 'Capital 21', 'Cibaena TV', 'Ciudades del Ocio TV', 'Claro Vision TV',
     'EDN TV', 'GalaxiATeVe', 'Gex TV', 'GikTVMX', 'Girovisual', 'GO TV', 'Guaro TV',
@@ -246,7 +246,15 @@ export async function GET(request: Request) {
     'Argentinisima Satelital', 'Atabal TV', 'Atcco Canal 2', 'ATV Sur', 'Austral TV', 'Aysen TV',
     'B15 Fresnillo', 'B15 Zacatecas', 'Bolivision', 'Bonao TV', 'Bruno Masi TV', 'CaliTV',
     'Camu TV', 'Canal 11 TuTV', 'Canal Dos', 'CDN', 'Color Vision', 'Digital 15', 'Paraguay TV',
-    'Radio Bocairent TV', 'SUR TV Itapua', 'Telefuturo', 'Trece', 'Telesistema 11', 'TVGE'] // Escribe aquí los nombres de canales que quieres skipear
+    'Radio Bocairent TV', 'SUR TV Itapua', 'Telefuturo', 'Trece', 'Telesistema 11', 'TVGE',
+    'Radiocanal', 'Ciudad Magazine', 'Citytv Bogota', 'Caoba TV Radio', 'Canal Sur 2', 'Canal Sierra de Cadiz',
+    'Canal San Roque', 'Canal Mundo Vision', 'Canal Mas Television', 'Canal Institucional', 'Canal Habana',
+    'Canal Extremadura Satelite', 'Canal Calima TV', 'Canal 8 Vision TV', 'Canal 8 TV+', 'Canal 8',
+    'Canal 7 Neuquen', 'Canal 5 TV Cozumel', 'Canal 56', 'Canal 4 RD', 'Canal 33 Tijuana', 'Canal 21 Tachira',
+    'Canal 21 Huancayo', 'Canal 1 Nuble', 'Canal 12', 'ATV', 'TV Publica', 'Telemicro', 'TeleAragua', 'Tele Antillas',
+    'KNSO 51.1', 'CreaLaTV', 'CNT Mas TV', 'CNC Santander de Quilichao', 'CNC Bugavision', 'CMM TV', 'Cinevision Canal 19',
+    'CHTV', 'Cerritos TV3', 'CAtv', 'Catatumbo TV', 'Caritas TV', 'Capricho TV', 'Canal Malaga RTV',
+    'Canal DTV', 'Aguacate TV', 'Colosal TV'] // Escribe aquí los nombres de canales que quieres skipear
 
   try {
     const [channelsRes, feedsRes, streamsRes, logosRes] = await Promise.all([
@@ -279,7 +287,7 @@ export async function GET(request: Request) {
       // Validación de disponibilidad del stream
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 10000)
+        const timeoutId = setTimeout(() => controller.abort(), 5000)
         const response = await fetch(stream.url, { method: 'HEAD', headers: { 'User-Agent': 'Mozilla/5.0' }, signal: controller.signal })
         clearTimeout(timeoutId)
         if (!response.ok) return null
