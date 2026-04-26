@@ -232,8 +232,21 @@ export async function GET(request: Request) {
   })
 
   // --- External API Integration (IPTV-ORG) ---
-  const ALLOWED_CATEGORIES = ['family', 'entertainment'] // Escribe aquí las categorías que quieres obtener
-  const IGNORED_CHANNELS = ['Canal a omitir 1', 'Canal a omitir 2'] // Escribe aquí los nombres de canales que quieres skipear
+  const ALLOWED_CATEGORIES = ['family', 'general'] // Escribe aquí las categorías que quieres obtener
+  const IGNORED_CHANNELS = ['Telenovisa43', 'The Pet Collective', 'Buena TV', 'Canal Nets',
+    'Canica TV', 'Capital 21', 'Cibaena TV', 'Ciudades del Ocio TV', 'Claro Vision TV',
+    'EDN TV', 'GalaxiATeVe', 'Gex TV', 'GikTVMX', 'Girovisual', 'GO TV', 'Guaro TV',
+    'Hispania TV', 'America TeVe', 'Antena 21', 'Bacan Te Veo', 'Chile Channel', 'MakroDigital Television',
+    'Mas Talk', 'Mel Radio TV', 'Metro TV', '¡OPA!', 'Yunavision', 'WRUA-DT1', 'VB Media TV',
+    'Univers TV', 'Unifranz', 'TV Canal Sur', 'TeveColombia', 'Telerayo', 'Telemundo Corpus Christi',
+    'Super Cable', 'SolTV', 'SAS TV', 'Red+', 'RCN Mas', 'Radio Yguazu TV', 'Pula TV',
+    'PSN', 'Power Max Radio TV', 'Popu TV', 'Oasis TV', 'Nitida TV', '5tv', 'AION TV',
+    'Aire de Santa Fe', 'Alacanti TV', 'Alcarria TV', 'Algo Media TV', 'Alsacias Television',
+    'AlternaTV', 'America Internacional', 'America Paraguay', 'Antofagasta TV', 'Arabi TV',
+    'Argentinisima Satelital', 'Atabal TV', 'Atcco Canal 2', 'ATV Sur', 'Austral TV', 'Aysen TV',
+    'B15 Fresnillo', 'B15 Zacatecas', 'Bolivision', 'Bonao TV', 'Bruno Masi TV', 'CaliTV',
+    'Camu TV', 'Canal 11 TuTV', 'Canal Dos', 'CDN', 'Color Vision', 'Digital 15', 'Paraguay TV',
+    'Radio Bocairent TV', 'SUR TV Itapua', 'Telefuturo', 'Trece', 'Telesistema 11', 'TVGE'] // Escribe aquí los nombres de canales que quieres skipear
 
   try {
     const [channelsRes, feedsRes, streamsRes, logosRes] = await Promise.all([
@@ -257,7 +270,8 @@ export async function GET(request: Request) {
       return hasAllowedCategory && isSpanish && isNotIgnored
     })
 
-    // 3. Mapear y validar los streams
+
+    // 3. Mapear y validar los streams con control de concurrencia (ej. lotes de 20)
     const externalChannelPromises = filteredChannels.map(async (channel: any) => {
       const stream = streamsRes.find((s: any) => s.channel === channel.id)
       if (!stream || !stream.url) return null
@@ -265,8 +279,8 @@ export async function GET(request: Request) {
       // Validación de disponibilidad del stream
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 5000)
-        const response = await fetch(stream.url, { method: 'HEAD', signal: controller.signal })
+        const timeoutId = setTimeout(() => controller.abort(), 10000)
+        const response = await fetch(stream.url, { method: 'HEAD', headers: { 'User-Agent': 'Mozilla/5.0' }, signal: controller.signal })
         clearTimeout(timeoutId)
         if (!response.ok) return null
       } catch (err) {
@@ -313,6 +327,7 @@ export async function GET(request: Request) {
     })
 
     const resolvedExternal = await Promise.all(externalChannelPromises)
+
     resolvedExternal.forEach(res => {
       if (res) {
         if (!feed[res.key]) {

@@ -4,7 +4,7 @@
 #
 
 app = 'asstream-v2'
-primary_region = 'dfw'
+primary_region = 'gdl'
 
 [build]
 
