@@ -207,14 +207,18 @@ export async function GET(request: Request) {
       )
 
       const filteredChannels = channelsRes.filter((c: { id: string, categories?: string[] }) => {
-        if (!c.categories) return false
-        const hasAllowedCategory = c.categories.some((cat: string) => ALLOWED_CATEGORIES.includes(cat.toLowerCase()))
         const isSpanish = spanishChannelIds.has(c.id)
         const isWhitelisted = ALLOWED_CHANNELS.has(c.id)
-        return isWhitelisted && isSpanish && hasAllowedCategory
+        
+        if (!isWhitelisted || !isSpanish) return false
+
+        const hasNoCategory = !c.categories || c.categories.length === 0
+        const hasAllowedCategory = !hasNoCategory && c.categories!.some((cat: string) => ALLOWED_CATEGORIES.includes(cat.toLowerCase()))
+        
+        return hasAllowedCategory || hasNoCategory
       })
 
-      const externalChannelPromises = filteredChannels.map(async (channel: { id: string, name: string, categories: string[] }) => {
+      const externalChannelPromises = filteredChannels.map(async (channel: { id: string, name: string, categories?: string[] }) => {
         const stream = streamsRes.find((s: { channel: string, url: string, quality?: string }) => s.channel === channel.id)
         if (!stream || !stream.url) return null
 
@@ -229,7 +233,7 @@ export async function GET(request: Request) {
         }
 
         const logo = logosRes.find((l: { channel: string, url: string }) => l.channel === channel.id)
-        const assignedCategory = channel.categories.find((cat: string) => ALLOWED_CATEGORIES.includes(cat.toLowerCase())) || 'external'
+        const assignedCategory = (channel.categories && channel.categories.find((cat: string) => ALLOWED_CATEGORIES.includes(cat.toLowerCase()))) || 'Extra'
         const key = toCamelCase(assignedCategory)
 
         const channelData = {
