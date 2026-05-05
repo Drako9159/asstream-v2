@@ -39,7 +39,7 @@ export default async function LoginPage({
           </Button>
         </form>
         <div className="text-center text-sm dark:text-neutral-400">
-          Don't have an account? <Link href="/register" className="underline dark:text-neutral-300">Register</Link>
+          Don&apos;t have an account? <Link href="/register" className="underline dark:text-neutral-300">Register</Link>
         </div>
       </div>
     </div>

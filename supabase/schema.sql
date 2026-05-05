@@ -102,3 +102,43 @@ create policy "Users can delete their own channels" on public.channels
 create policy "Public can view active channels" on public.channels
   for select using (is_active = true and auth.role() = 'anon');
 
+------------------------------------------------------------
+
+-- 1. Tabla para configuraciones generales (como las categorías permitidas)
+CREATE TABLE IF NOT EXISTS public.external_settings (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  key TEXT NOT NULL, -- Ej: 'allowed_categories'
+  value JSONB NOT NULL, -- Ej: ["family", "movies"]
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(user_id, key)
+);
+   
+-- 2. Tabla para la lista blanca de canales de IPTV-ORG
+CREATE TABLE IF NOT EXISTS public.external_channels (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  external_id TEXT NOT NULL, -- El ID que viene de la API (ej: 'Antena3.es')
+  name TEXT NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(user_id, external_id)
+);
+   
+-- Habilitar RLS
+ALTER TABLE public.external_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.external_channels ENABLE ROW LEVEL SECURITY;
+   
+-- Políticas para external_settings
+CREATE POLICY "Users can manage their own external settings" ON
+  public.external_settings
+  FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Public can view external settings" ON public.external_settings
+  FOR SELECT USING (auth.role() = 'anon');
+
+-- Políticas para external_channels
+CREATE POLICY "Users can manage their own external channels" ON
+  public.external_channels
+  FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "Public can view external channels" ON public.external_channels
+   FOR SELECT USING (auth.role() = 'anon');

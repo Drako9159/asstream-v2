@@ -13,22 +13,31 @@ export type Category = Database['public']['Tables']['categories']['Row']
 
 export function CategoryManager({ initialCategories, viewMode = 'all' }: { initialCategories: Category[], viewMode?: 'all' | 'create' | 'list' }) {
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [isPending, setIsPending] = useState(false)
 
   const handleCreate = async (formData: FormData) => {
+    if (isPending) return
+    setIsPending(true)
     const res = await createCategory(formData)
     if (res?.error) toast.error('Error', { description: res.error })
     else {
       toast.success('Category created successfully')
+      const form = document.getElementById('create_form') as HTMLFormElement
+      if (form) form.reset()
     }
+    setIsPending(false)
   }
 
   const handleUpdate = async (formData: FormData) => {
+    if (isPending) return
+    setIsPending(true)
     const res = await updateCategory(formData)
     if (res?.error) toast.error('Error while editing', { description: res.error })
     else {
       toast.success('Category updated successfully')
       setEditingId(null)
     }
+    setIsPending(false)
   }
 
   const handleDelete = async (id: string) => {
@@ -46,7 +55,7 @@ export function CategoryManager({ initialCategories, viewMode = 'all' }: { initi
       {(viewMode === 'all' || viewMode === 'create') && (
         <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 p-4 bg-white dark:bg-neutral-950 shadow-sm">
           <h3 className="text-lg font-medium mb-4 dark:text-neutral-50">New Category</h3>
-          <form action={handleCreate} className="flex flex-col sm:flex-row gap-4 sm:items-end">
+          <form id="create_form" action={handleCreate} className="flex flex-col sm:flex-row gap-4 sm:items-end">
             <div className="flex-1 space-y-2">
               <Label htmlFor="create_name" className="dark:text-neutral-200">Name</Label>
               <Input id="create_name" name="name" required className="dark:text-neutral-50" />
@@ -55,7 +64,9 @@ export function CategoryManager({ initialCategories, viewMode = 'all' }: { initi
               <Label htmlFor="create_desc" className="dark:text-neutral-200">Description</Label>
               <Input id="create_desc" name="description" className="dark:text-neutral-50" />
             </div>
-            <Button type="submit" className="dark:bg-neutral-50 dark:text-neutral-900 w-full sm:w-auto hover:cursor-pointer dark:hover:bg-neutral-50/80">Create</Button>
+            <Button type="submit" disabled={isPending} className="dark:bg-neutral-50 dark:text-neutral-900 w-full sm:w-auto hover:cursor-pointer dark:hover:bg-neutral-50/80 disabled:opacity-50 disabled:cursor-not-allowed">
+              {isPending ? 'Saving...' : 'Create'}
+            </Button>
           </form>
         </div>
       )}
@@ -65,7 +76,7 @@ export function CategoryManager({ initialCategories, viewMode = 'all' }: { initi
         <div className="space-y-4">
           <h3 className="text-lg font-medium dark:text-neutral-50">Your Categories</h3>
           {initialCategories.length === 0 ? (
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">You don't have any categories yet.</p>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">You don&apos;t have any categories yet.</p>
           ) : (
             <div className="grid gap-4">
               {initialCategories.map((cat) => (
@@ -82,7 +93,9 @@ export function CategoryManager({ initialCategories, viewMode = 'all' }: { initi
                         <Input id={`edit_desc_${cat.id}`} name="description" defaultValue={cat.description || ''} className="dark:text-neutral-50" />
                       </div>
                       <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                        <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white dark:bg-green-600 dark:hover:bg-green-700 h-10 w-full sm:w-auto px-6 hover:cursor-pointer">Save</Button>
+                        <Button type="submit" disabled={isPending} className="bg-green-600 hover:bg-green-700 text-white dark:bg-green-600 dark:hover:bg-green-700 h-10 w-full sm:w-auto px-6 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                          {isPending ? 'Saving...' : 'Save'}
+                        </Button>
                         <Button type="button" className="bg-neutral-100 text-neutral-900 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 h-10 w-full sm:w-auto hover:cursor-pointer" onClick={() => setEditingId(null)}>Cancel</Button>
                       </div>
                     </form>

@@ -3,27 +3,35 @@
 import { useState, useEffect } from 'react'
 import { CategoryManager, Category } from './category-client'
 import { ChannelManager, Channel } from './channel-client'
-import { ListVideo, PlusCircle, LayoutList, FolderPlus } from 'lucide-react'
+import { ExternalSourceManager } from './external-source-client'
+import { ListVideo, PlusCircle, LayoutList, FolderPlus, Globe } from 'lucide-react'
 
-type Tab = 'list-channels' | 'create-channel' | 'list-categories' | 'create-category'
+type Tab = 'list-channels' | 'create-channel' | 'list-categories' | 'create-category' | 'external-sources'
 
 export function DashboardSidebarLayout({
   categories,
   channels,
+  externalSettings,
+  whitelistedChannels,
   user
 }: {
   categories: Category[]
   channels: Channel[]
-  user: any
+  externalSettings: { key: string, value: unknown }[]
+  whitelistedChannels: { external_id: string, name: string, is_active: boolean | null }[]
+  user: { id: string, email?: string }
 }) {
   const [activeTab, setActiveTab] = useState<Tab>('list-channels')
-  const [fullUrl, setFullUrl] = useState<string | null>(null)
+  const [origin, setOrigin] = useState<string | null>(null)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setFullUrl(`${window.location.origin}/api/feed?user_id=${user.id}`)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setOrigin(window.location.origin)
     }
-  }, [user])
+  }, [])
+
+  const fullUrl = origin && user?.id ? `${origin}/api/feed?user_id=${user.id}` : null
 
   const tabClass = (tab: Tab) =>
     `w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-md text-sm transition-colors ${activeTab === tab ? 'bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-900 font-medium' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400'}`
@@ -69,6 +77,14 @@ export function DashboardSidebarLayout({
             <FolderPlus className="w-4 h-4" />
             New Category
           </button>
+
+          <div className="h-px bg-neutral-100 dark:bg-neutral-800 mx-2 my-2"></div>
+
+          <p className="text-xs text-neutral-500 mb-2 uppercase font-bold tracking-wider px-2 pt-2">Global Setup</p>
+          <button onClick={() => setActiveTab('external-sources')} className={tabClass('external-sources') + ' hover:cursor-pointer'}>
+            <Globe className="w-4 h-4" />
+            External Sources
+          </button>
         </nav>
       </aside>
 
@@ -96,6 +112,15 @@ export function DashboardSidebarLayout({
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
             <h2 className="text-2xl font-bold dark:text-neutral-50 text-neutral-900 mb-6">New Category</h2>
             <CategoryManager initialCategories={categories} viewMode="create" />
+          </div>
+        )}
+        {activeTab === 'external-sources' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <h2 className="text-2xl font-bold dark:text-neutral-50 text-neutral-900 mb-6">External IPTV Sources</h2>
+            <ExternalSourceManager
+              initialSettings={externalSettings}
+              initialWhitelistedChannels={whitelistedChannels}
+            />
           </div>
         )}
       </main>

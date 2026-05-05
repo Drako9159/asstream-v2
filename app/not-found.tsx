@@ -11,7 +11,7 @@ export default function NotFound() {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">404 - Page Not Found</h1>
         <p className="text-base text-neutral-500 dark:text-neutral-400 max-w-md mx-auto">
-          We couldn't find the page you were looking for. The link might be broken, or the page may have been removed.
+          We couldn&apos;t find the page you were looking for. The link might be broken, or the page may have been removed.
         </p>
       </div>
 

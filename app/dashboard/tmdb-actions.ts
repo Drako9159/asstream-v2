@@ -7,14 +7,6 @@ export async function searchTMDBMedia(query: string) {
   if (!apiKey) throw new Error('TMDB_API_KEY no está configurada')
 
   const url = `${TMDB_BASE_URL}/search/multi?query=${encodeURIComponent(query)}&language=es-ES&page=1&include_adult=false`
-  
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: `Bearer ${apiKey}`
-    }
-  }
 
   // TMDB supports api_key param or Bearer auth. We'll use api_key param for simplicity if it's just a raw hash,
   // but if the user provides an Access Token (v4), Bearer is better. Standard v3 uses ?api_key=...

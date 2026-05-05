@@ -12,6 +12,16 @@ import { Database } from '@/types/supabase'
 
 export type Channel = Database['public']['Tables']['channels']['Row']
 
+export interface TMDBItem {
+  id: number
+  media_type?: 'movie' | 'tv'
+  poster_path?: string
+  title?: string
+  name?: string
+  release_date?: string
+  first_air_date?: string
+}
+
 export function ChannelManager({ initialChannels, categories, viewMode = 'all' }: { initialChannels: Channel[], categories: Category[], viewMode?: 'all' | 'create' | 'list' }) {
   const [editingId, setEditingId] = useState<string | null>(null)
 
@@ -30,7 +40,7 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
 
   const [isStreaming, setIsStreaming] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [searchResults, setSearchResults] = useState<TMDBItem[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -63,14 +73,14 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
     try {
       const results = await searchTMDBMedia(searchQuery)
       setSearchResults(results)
-    } catch (e: any) {
-      toast.error(e.message || 'Error buscando en TMDB')
+    } catch (e) {
+      toast.error((e as Error).message || 'Error buscando en TMDB')
     } finally {
       setIsSearching(false)
     }
   }
 
-  const handleSelectTMDB = async (item: any) => {
+  const handleSelectTMDB = async (item: TMDBItem) => {
     try {
       const details = await getTMDBDetails(item.id, item.media_type || 'movie')
       setFormState(prev => ({
@@ -82,12 +92,16 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
       }))
       toast.success('Data auto-completed by TMDB')
       setSearchResults([])
-    } catch (e: any) {
-      toast.error('Error detailing the element', { description: e.message })
+    } catch (e) {
+      toast.error('Error detailing the element', { description: (e as Error).message })
     }
   }
 
+  const [isPending, setIsPending] = useState(false)
+
   const handleSubmit = async (formData: FormData) => {
+    if (isPending) return
+    setIsPending(true)
     formData.set('is_streaming', isStreaming.toString())
     formData.set('is_active', formState.is_active.toString())
     formData.set('quality', formState.quality)
@@ -108,6 +122,7 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
         resetForm()
       }
     }
+    setIsPending(false)
   }
 
   const handleEditClick = (channel: Channel) => {
@@ -123,7 +138,9 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
       is_active: channel.is_active ?? true,
       category_id: channel.category_id
     })
-    window.scrollTo({ top: 800, behavior: 'smooth' })
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
   }
 
   const handleDelete = async (id: string) => {
@@ -138,7 +155,7 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
   if (categories.length === 0) {
     return (
       <div className="p-4 bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded text-yellow-800 dark:text-yellow-100 mt-8">
-        You cannot create channels because you don't have any categories. Please create a category first.
+        You cannot create channels because you don&apos;t have any categories. Please create a category first.
       </div>
     )
   }
@@ -201,6 +218,7 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
                 <div className="max-h-64 overflow-y-auto bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded p-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {searchResults.map(res => (
                     <div key={res.id} onClick={() => handleSelectTMDB(res)} className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer rounded flex items-center gap-3 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={res.poster_path ? `https://image.tmdb.org/t/p/w92${res.poster_path}` : 'https://via.placeholder.com/92x138'} alt={res.title || res.name} className="w-12 h-16 object-cover rounded" />
                       <div>
                         <p className="font-medium text-sm line-clamp-1">{res.title || res.name}</p>
@@ -270,8 +288,8 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
               </div>
             </div>
 
-            <Button type="submit" className="w-full mt-4 bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-200 hover:cursor-pointer">
-              {editingId ? 'Save Changes' : 'Create Channel'}
+            <Button type="submit" disabled={isPending} className="w-full mt-4 bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-200 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+              {isPending ? 'Saving...' : editingId ? 'Save Changes' : 'Create Channel'}
             </Button>
           </form>
         </div>
@@ -296,7 +314,7 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
           </div>
 
           {initialChannels.length === 0 ? (
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">You don't have any channels registered yet.</p>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">You don&apos;t have any channels registered yet.</p>
           ) : filteredChannels.length === 0 ? (
             <p className="text-sm text-neutral-500 dark:text-neutral-400">No channels found in this category.</p>
           ) : (
@@ -308,7 +326,10 @@ export function ChannelManager({ initialChannels, categories, viewMode = 'all' }
                     <div key={cha.id} className={`rounded border ${editingId === cha.id ? 'border-blue-500 shadow-md transform scale-[1.01] transition-all' : 'border-neutral-200 dark:border-neutral-800 shadow-sm'} p-4 bg-white dark:bg-neutral-950 flex flex-col gap-4`}>
                       <div className="flex gap-4 h-full">
                         {cha.poster_url ? (
-                          <img src={cha.poster_url} alt={cha.title} className="w-16 h-24 object-cover rounded shadow" />
+                          <>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={cha.poster_url} alt={cha.title} className="w-16 h-24 object-cover rounded shadow" />
+                          </>
                         ) : (
                           <div className="w-16 h-24 bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center rounded text-xs text-neutral-500 font-medium shadow">N/A</div>
                         )}

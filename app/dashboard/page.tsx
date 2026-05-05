@@ -17,10 +17,14 @@ export default async function DashboardPage() {
 
   const [
     { data: categories },
-    { data: channels }
+    { data: channels },
+    { data: externalSettings },
+    { data: whitelistedChannels }
   ] = await Promise.all([
     supabase.from('categories').select('*').order('created_at', { ascending: false }),
-    supabase.from('channels').select('*').order('created_at', { ascending: false })
+    supabase.from('channels').select('*').order('created_at', { ascending: false }),
+    supabase.from('external_settings').select('*').eq('user_id', user.id),
+    supabase.from('external_channels').select('*').eq('user_id', user.id).order('name', { ascending: true })
   ])
 
   return (
@@ -38,6 +42,8 @@ export default async function DashboardPage() {
         user={user}
         categories={categories || []}
         channels={channels || []}
+        externalSettings={externalSettings || []}
+        whitelistedChannels={whitelistedChannels || []}
       />
     </div>
   )
