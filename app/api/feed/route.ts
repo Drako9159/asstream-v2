@@ -120,14 +120,22 @@ export async function GET(request: Request) {
       try {
         const twitch = (await import('twitch-m3u8')).default || await import('twitch-m3u8')
         const twitchUsername = channel.title.replace(/\s+/g, '').toLowerCase()
-        const streams = await twitch.getStream(twitchUsername)
+        // const streams = await twitch.getStream(twitchUsername)
+
+        const streamPromise = twitch.getStream(twitchUsername)
+        const timeoutPromise = new Promise<any[]>((_, reject) => {
+          setTimeout(() => reject(new Error('Timeout obtener stream de Twitch ' + channel.title)), 5000)
+        })
+
+        const streams = await Promise.race([streamPromise, timeoutPromise])
+
         if (streams && streams.length > 0) {
           finalUrl = streams[0].url
         } else {
           return null
         }
-      } catch {
-        console.error('Twitch stream error:', channel.title)
+      } catch (error) {
+        console.error('Twitch stream channel error:', channel.title, error)
         return null
       }
     } else if (key === 'liveFeeds') {
@@ -187,7 +195,7 @@ export async function GET(request: Request) {
   if (ALLOWED_CATEGORIES.length > 0 || ALLOWED_CHANNELS.size > 0) {
     try {
       const now = Date.now()
-      
+
       if (!iptvCache || now - iptvCacheTimestamp > IPTV_CACHE_DURATION) {
         const [channelsRes, feedsRes, streamsRes, logosRes] = await Promise.all([
           fetch('https://iptv-org.github.io/api/channels.json').then(r => r.json()),
@@ -195,7 +203,7 @@ export async function GET(request: Request) {
           fetch('https://iptv-org.github.io/api/streams.json').then(r => r.json()),
           fetch('https://iptv-org.github.io/api/logos.json').then(r => r.json())
         ])
-        
+
         iptvCache = { channelsRes, feedsRes, streamsRes, logosRes }
         iptvCacheTimestamp = now
       }
@@ -209,12 +217,12 @@ export async function GET(request: Request) {
       const filteredChannels = channelsRes.filter((c: { id: string, categories?: string[] }) => {
         const isSpanish = spanishChannelIds.has(c.id)
         const isWhitelisted = ALLOWED_CHANNELS.has(c.id)
-        
+
         if (!isWhitelisted || !isSpanish) return false
 
         const hasNoCategory = !c.categories || c.categories.length === 0
         const hasAllowedCategory = !hasNoCategory && c.categories!.some((cat: string) => ALLOWED_CATEGORIES.includes(cat.toLowerCase()))
-        
+
         return hasAllowedCategory || hasNoCategory
       })
 
